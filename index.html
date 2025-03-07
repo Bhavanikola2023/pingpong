@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Object Placement</title>
+    <!-- Import A-Frame and AR.js libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/1.3.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+    <script>
+        // Component to place objects on tap
+        AFRAME.registerComponent('tap-place', {
+            init: function() {
+                // Store scene and camera entities
+                this.scene = this.el;
+                this.camera = document.querySelector('a-camera');
+                
+                // Object counter for unique IDs
+                this.counter = 0;
+                
+                // Array of available models and colors
+                this.models = [
+                    { shape: 'box', color: '#4CC3D9' },
+                    { shape: 'sphere', color: '#EF2D5E' },
+                    { shape: 'cylinder', color: '#FFC65D' },
+                    { shape: 'cone', color: '#7BC8A4' }
+                ];
+                
+                // Listen for screen taps
+                document.body.addEventListener('click', this.onTap.bind(this));
+                
+                // Create UI for shape selection
+                this.createUI();
+                
+                // Current selected model (default to first one)
+                this.currentModelIndex = 0;
+            },
+            
+            createUI: function() {
+                // Create container
+                const container = document.createElement('div');
+                container.className = 'ui-container';
+                document.body.appendChild(container);
+                
+                // Add title
+                const title = document.createElement('div');
+                title.textContent = 'Select Shape:';
+                title.className = 'ui-title';
+                container.appendChild(title);
+                
+                // Add shape buttons
+                this.models.forEach((model, index) => {
+                    const button = document.createElement('button');
+                    button.textContent = model.shape.charAt(0).toUpperCase() + model.shape.slice(1);
+                    button.className = 'ui-button';
+                    button.style.backgroundColor = model.color;
+                    if (index === 0) button.classList.add('active');
+                    
+                    button.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.currentModelIndex = index;
+                        
+                        // Update active button
+                        document.querySelectorAll('.ui-button').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+                        button.classList.add('active');
+                    });
+                    
+                    container.appendChild(button);
+                });
+                
+                // Add reset button
+                const resetButton = document.createElement('button');
+                resetButton.textContent = 'Reset All';
+                resetButton.className = 'ui-button reset-button';
+                resetButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.resetScene();
+                });
+                container.appendChild(resetButton);
+                
+                // Add styles
+                const style = document.createElement('style');
+                style.textContent = `
+                    .ui-container {
+                        position: fixed;
+                        top: 10px;
+                        right: 10px;
+                        display: flex;
+                        flex-direction: column;
+                        background-color: rgba(0,0,0,0.7);
+                        border-radius: 10px;
+                        padding: 10px;
+                        z-index: 999;
+                    }
+                    .ui-title {
+                        color: white;
+                        margin-bottom: 10px;
+                        font-family: Arial, sans-serif;
+                        font-weight: bold;
+                    }
+                    .ui-button {
+                        margin-bottom: 5px;
+                        padding: 8px;
+                        border: none;
+                        border-radius: 5px;
+                        color: white;
+                        font-weight: bold;
+                        text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+                        cursor: pointer;
+                    }
+                    .ui-button.active {
+                        outline: 3px solid white;
+                    }
+                    .reset-button {
+                        margin-top: 10px;
+                        background-color: #ff4136;
+                    }
+                    .info-box {
+                        position: fixed;
+                        bottom: 10px;
+                        left: 10px;
+                        background-color: rgba(0,0,0,0.7);
+                        color: white;
+                        padding: 10px;
+                        border-radius: 5px;
+                        font-family: Arial, sans-serif;
+                        z-index: 999;
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                // Add info box
+                const infoBox = document.createElement('div');
+                infoBox.className = 'info-box';
+                infoBox.innerHTML = 'Tap anywhere on the ground to place objects.<br>Use the buttons to change shapes.';
+                document.body.appendChild(infoBox);
+            },
+            
+            resetScene: function() {
+                // Remove all placed objects
+                const objects = document.querySelectorAll('.placed-object');
+                objects.forEach(obj => {
+                    obj.parentNode.removeChild(obj);
+                });
+                this.counter = 0;
+            },
+            
+            onTap: function(event) {
+                // Get current camera position and rotation
+                const cameraPosition = this.camera.getAttribute('position');
+                const cameraRotation = this.camera.getAttribute('rotation');
+                
+                // Calculate placement position (in front of camera)
+                const distance = 3; // meters in front of camera
+                const radians = THREE.Math.degToRad(cameraRotation.y);
+                
+                const x = cameraPosition.x - distance * Math.sin(radians);
+                const z = cameraPosition.z - distance * Math.cos(radians);
+                
+                // Get selected model
+                const selectedModel = this.models[this.currentModelIndex];
+                
+                // Create the entity
+                const entity = document.createElement('a-entity');
+                entity.classList.add('placed-object');
+                entity.setAttribute('id', 'object-' + this.counter++);
+                
+                // Set entity properties based on selected model
+                entity.setAttribute(selectedModel.shape, '');
+                entity.setAttribute('material', 'color: ' + selectedModel.color + '; opacity: 0.9');
+                entity.setAttribute('position', {x: x, y: 0, z: z});
+                entity.setAttribute('scale', {x: 0.5, y: 0.5, z: 0.5});
+                
+                // Add animation (slower, longer duration)
+                entity.setAttribute('animation', {
+                    property: 'position.y',
+                    to: '0.5',
+                    dur: 3000,
+                    easing: 'easeOutElastic'
+                });
+                
+                // Add to scene
+                this.scene.appendChild(entity);
+            }
+        });
+    </script>
+</head>
+<body style="margin: 0; overflow: hidden;">
+    <!-- Create the AR scene with tap-place component -->
+    <a-scene embedded vr-mode-ui="enabled: false" arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;" tap-place>
+        <!-- Using the location-based AR -->
+        <a-camera gps-camera rotation-reader></a-camera>
+        
+        <!-- Ground plane (helps with depth perception) -->
+        <a-plane position="0 0 0" 
+                 rotation="-90 0 0" 
+                 width="100" 
+                 height="100" 
+                 color="#CCCCCC" 
+                 opacity="0.2">
+        </a-plane>
+    </a-scene>
+</body>
+</html>
