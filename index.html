@@ -1,783 +1,728 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tron 3D Pong</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background-color: #000;
-            font-family: 'Arial', sans-serif;
-            color: #0ff;
-        }
-        #gameCanvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-        #ui {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            padding: 10px;
-            background-color: rgba(0, 0, 0, 0.7);
-            border: 1px solid #0ff;
-            border-radius: 5px;
-            z-index: 10;
-        }
-        #score {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-        #instructions {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.85);
-            border: 2px solid #0ff;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            z-index: 20;
-            box-shadow: 0 0 20px #0ff;
-        }
-        #instructions h1 {
-            color: #0ff;
-            text-shadow: 0 0 10px #0ff;
-            margin-top: 0;
-        }
-        #instructions p {
-            font-size: 16px;
-            line-height: 1.5;
-        }
-        button {
-            background-color: #000;
-            color: #0ff;
-            border: 2px solid #0ff;
-            border-radius: 5px;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 20px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: 0 0 10px #0ff;
-        }
-        button:hover {
-            background-color: #0ff;
-            color: #000;
-        }
-        #gameOver {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.9);
-            border: 2px solid #0ff;
-            border-radius: 10px;
-            padding: 30px;
-            text-align: center;
-            z-index: 30;
-            display: none;
-            box-shadow: 0 0 30px #0ff;
-        }
-        #gameOver h1 {
-            color: #0ff;
-            font-size: 48px;
-            text-shadow: 0 0 15px #0ff;
-            margin-top: 0;
-        }
-        .glow {
-            text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
-        }
-        #loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #0ff;
-            font-size: 24px;
-            text-shadow: 0 0 10px #0ff;
-            z-index: 40;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tron 3D Pong</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #000;
+      font-family: 'Arial', sans-serif;
+      color: #0ff;
+    }
+    #gameCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    #ui {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
+      border: 1px solid #0ff;
+      border-radius: 5px;
+      z-index: 10;
+    }
+    #score {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    #instructions {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.85);
+      border: 2px solid #0ff;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      z-index: 20;
+      box-shadow: 0 0 20px #0ff;
+    }
+    #instructions h1 {
+      color: #0ff;
+      text-shadow: 0 0 10px #0ff;
+      margin-top: 0;
+    }
+    #instructions p {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    button {
+      background-color: #000;
+      color: #0ff;
+      border: 2px solid #0ff;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 20px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      box-shadow: 0 0 10px #0ff;
+    }
+    button:hover {
+      background-color: #0ff;
+      color: #000;
+    }
+    #gameOver {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.9);
+      border: 2px solid #0ff;
+      border-radius: 10px;
+      padding: 30px;
+      text-align: center;
+      z-index: 30;
+      display: none;
+      box-shadow: 0 0 30px #0ff;
+    }
+    #gameOver h1 {
+      color: #0ff;
+      font-size: 48px;
+      text-shadow: 0 0 15px #0ff;
+      margin-top: 0;
+    }
+    .glow {
+      text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+    }
+    #loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #0ff;
+      font-size: 24px;
+      text-shadow: 0 0 10px #0ff;
+      z-index: 40;
+    }
+  </style>
 </head>
 <body>
-    <div id="loading">INITIALIZING GRID...</div>
+  <div id="loading">INITIALIZING GRID...</div>
+  
+  <div id="ui">
+    <div id="score">PLAYER: 0 | AI: 0</div>
+  </div>
+  
+  <!-- Settings Panel (new) -->
+  <div id="settingsPanel" style="position: absolute; top: 10px; right: 10px; padding: 10px; background-color: rgba(0,0,0,0.7); border: 1px solid #0ff; border-radius: 5px; z-index: 10;">
+    <h3 style="margin: 0 0 10px 0; color: #0ff;">Settings</h3>
+    <label>Arena Width: <input type="number" id="arenaWidthInput" value="10" step="0.5"></label><br>
+    <label>Arena Height: <input type="number" id="arenaHeightInput" value="7" step="0.5"></label><br>
+    <label>Arena Depth: <input type="number" id="arenaDepthInput" value="10" step="0.5"></label><br>
+    <label>Paddle Width: <input type="number" id="paddleWidthInput" value="1.5" step="0.1"></label><br>
+    <label>Paddle Height: <input type="number" id="paddleHeightInput" value="1.5" step="0.1"></label><br>
+    <label>Ball Radius: <input type="number" id="ballRadiusInput" value="0.3" step="0.05"></label><br>
+    <label>Ball Speed: <input type="number" id="ballSpeedInput" value="0.15" step="0.01"></label><br>
+    <label>Difficulty: <input type="number" id="difficultyInput" value="0.85" min="0" max="1" step="0.05"></label><br>
+    <label>Max Score: <input type="number" id="maxScoreInput" value="5" step="1"></label><br>
+    <button id="applySettingsButton" style="margin-top:10px;">Apply Settings</button>
+  </div>
+  
+  <div id="instructions">
+    <h1 class="glow">TRON 3D PONG</h1>
+    <p>Move your mouse to control your paddle</p>
+    <p>Hit the ball at different angles to add spin</p>
+    <p>First to 5 points wins</p>
+    <p>Can you defeat the AI opponent?</p>
+    <button id="startButton">ENTER THE GRID</button>
+  </div>
+  
+  <div id="gameOver">
+    <h1 id="gameOverText">YOU WIN</h1>
+    <p>Final Score</p>
+    <p id="finalScore">PLAYER: 0 | AI: 0</p>
+    <button id="restartButton">PLAY AGAIN</button>
+  </div>
+  
+  <canvas id="gameCanvas"></canvas>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    // Game variables
+    let renderer, scene, camera, playerPaddle, aiPaddle, ball;
+    let arenaGroup; // group for arena objects
+    let gameActive = false;
+    let playerScore = 0;
+    let aiScore = 0;
+    let lastMouseX = 0;
+    let lastMouseY = 0;
+    let mouseXSpeed = 0;
+    let mouseYSpeed = 0;
+    let ballSpeed = 0.15;
+    let ballVelocity = new THREE.Vector3();
+    let arenaWidth = 10;
+    let arenaHeight = 7;
+    let arenaDepth = 10;
+    let paddleWidth = 1.5;
+    let paddleHeight = 1.5;
+    let paddleDepth = 0.2;
+    let ballRadius = 0.3;
+    let paddleSegments = 16;
+    let ballSegments = 32;
+    let difficulty = 0.85; // AI difficulty (0-1)
+    let maxScore = 5;
+    let ballTrail = [];
+    let maxTrailLength = 10;
+    let audio = {
+      hit: null,
+      wall: null,
+      score: null,
+      win: null,
+      lose: null,
+      background: null
+    };
     
-    <div id="ui">
-        <div id="score">PLAYER: 0 | AI: 0</div>
-    </div>
+    // DOM elements
+    const scoreElement = document.getElementById('score');
+    const startButton = document.getElementById('startButton');
+    const restartButton = document.getElementById('restartButton');
+    const instructionsElement = document.getElementById('instructions');
+    const gameOverElement = document.getElementById('gameOver');
+    const gameOverTextElement = document.getElementById('gameOverText');
+    const finalScoreElement = document.getElementById('finalScore');
+    const loadingElement = document.getElementById('loading');
+    const applySettingsButton = document.getElementById('applySettingsButton');
     
-    <div id="instructions">
-        <h1 class="glow">TRON 3D PONG</h1>
-        <p>Move your mouse to control your paddle</p>
-        <p>Hit the ball at different angles to add spin</p>
-        <p>First to 5 points wins</p>
-        <p>Can you defeat the AI opponent?</p>
-        <button id="startButton">ENTER THE GRID</button>
-    </div>
+    // Initialize the game
+    function init() {
+      // Create renderer
+      renderer = new THREE.WebGLRenderer({ 
+        canvas: document.getElementById('gameCanvas'),
+        antialias: true
+      });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x000000);
+      
+      // Create scene
+      scene = new THREE.Scene();
+      
+      // Create camera
+      camera = new THREE.PerspectiveCamera(
+        75, 
+        window.innerWidth / window.innerHeight, 
+        0.1, 
+        1000
+      );
+      camera.position.set(0, 4, 8);
+      camera.lookAt(0, 0, 0);
+      
+      // Add arena and lighting
+      createArena();
+      createLighting();
+      
+      // Create paddles and ball
+      createPaddles();
+      createBall();
+      
+      // Event listeners
+      window.addEventListener('resize', onWindowResize);
+      document.addEventListener('mousemove', onMouseMove);
+      startButton.addEventListener('click', startGame);
+      restartButton.addEventListener('click', restartGame);
+      applySettingsButton.addEventListener('click', applySettings);
+      
+      // Animation loop
+      animate();
+      
+      // Hide loading text
+      loadingElement.style.display = 'none';
+    }
     
-    <div id="gameOver">
-        <h1 id="gameOverText">YOU WIN</h1>
-        <p>Final Score</p>
-        <p id="finalScore">PLAYER: 0 | AI: 0</p>
-        <button id="restartButton">PLAY AGAIN</button>
-    </div>
+    // Create the game arena using a group for easy re-creation
+    function createArena() {
+      // If an arena group exists, remove it
+      if (arenaGroup) {
+        scene.remove(arenaGroup);
+      }
+      arenaGroup = new THREE.Group();
+      
+      // Arena floor
+      const floorGeometry = new THREE.PlaneGeometry(arenaWidth, arenaDepth, 20, 20);
+      const floorMaterial = new THREE.MeshStandardMaterial({
+        color: 0x000000,
+        emissive: 0x001030,
+        wireframe: false,
+        transparent: true,
+        opacity: 0.8
+      });
+      const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+      floor.rotation.x = -Math.PI / 2;
+      floor.position.y = -arenaHeight/2;
+      arenaGroup.add(floor);
+      
+      // Grid lines for floor
+      const gridHelper = new THREE.GridHelper(
+        Math.max(arenaWidth, arenaDepth),
+        20,
+        0x0088ff,
+        0x0044aa
+      );
+      gridHelper.position.y = -arenaHeight/2 + 0.01;
+      arenaGroup.add(gridHelper);
+      
+      // Arena walls material
+      const wallMaterial = new THREE.MeshStandardMaterial({
+        color: 0x00aaff,
+        emissive: 0x0055aa,
+        transparent: true,
+        opacity: 0.3,
+        side: THREE.DoubleSide
+      });
+      
+      // Left wall
+      const leftWallGeometry = new THREE.PlaneGeometry(arenaDepth, arenaHeight);
+      const leftWall = new THREE.Mesh(leftWallGeometry, wallMaterial);
+      leftWall.position.set(-arenaWidth/2, 0, 0);
+      leftWall.rotation.y = Math.PI / 2;
+      arenaGroup.add(leftWall);
+      addWallGlow(leftWall, -arenaWidth/2, 0, 0);
+      
+      // Right wall
+      const rightWallGeometry = new THREE.PlaneGeometry(arenaDepth, arenaHeight);
+      const rightWall = new THREE.Mesh(rightWallGeometry, wallMaterial);
+      rightWall.position.set(arenaWidth/2, 0, 0);
+      rightWall.rotation.y = -Math.PI / 2;
+      arenaGroup.add(rightWall);
+      addWallGlow(rightWall, arenaWidth/2, 0, 0);
+      
+      // Top wall
+      const topWallGeometry = new THREE.PlaneGeometry(arenaWidth, arenaHeight);
+      const topWall = new THREE.Mesh(topWallGeometry, wallMaterial);
+      topWall.position.set(0, 0, -arenaDepth/2);
+      arenaGroup.add(topWall);
+      addWallGlow(topWall, 0, 0, -arenaDepth/2);
+      
+      // Bottom wall
+      const bottomWallGeometry = new THREE.PlaneGeometry(arenaWidth, arenaHeight);
+      const bottomWall = new THREE.Mesh(bottomWallGeometry, wallMaterial);
+      bottomWall.position.set(0, 0, arenaDepth/2);
+      bottomWall.rotation.y = Math.PI;
+      arenaGroup.add(bottomWall);
+      addWallGlow(bottomWall, 0, 0, arenaDepth/2);
+      
+      // Ceiling
+      const ceilingGeometry = new THREE.PlaneGeometry(arenaWidth, arenaDepth);
+      const ceilingMaterial = new THREE.MeshStandardMaterial({
+        color: 0x000000,
+        emissive: 0x001030,
+        wireframe: false,
+        transparent: true,
+        opacity: 0.5,
+        side: THREE.DoubleSide
+      });
+      const ceiling = new THREE.Mesh(ceilingGeometry, ceilingMaterial);
+      ceiling.rotation.x = Math.PI / 2;
+      ceiling.position.y = arenaHeight/2;
+      arenaGroup.add(ceiling);
+      
+      scene.add(arenaGroup);
+    }
     
-    <canvas id="gameCanvas"></canvas>
+    // Add glow effect to wall edges
+    function addWallGlow(wall, x, y, z) {
+      const edges = new THREE.EdgesGeometry(wall.geometry);
+      const lineMaterial = new THREE.LineBasicMaterial({ 
+        color: 0x00ffff,
+        linewidth: 2
+      });
+      const wireframe = new THREE.LineSegments(edges, lineMaterial);
+      wireframe.position.set(x, y, z);
+      wireframe.rotation.copy(wall.rotation);
+      scene.add(wireframe);
+    }
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script>
-        // Game variables
-        let renderer, scene, camera, playerPaddle, aiPaddle, ball;
-        let gameActive = false;
-        let playerScore = 0;
-        let aiScore = 0;
-        let lastMouseX = 0;
-        let lastMouseY = 0;
-        let mouseXSpeed = 0;
-        let mouseYSpeed = 0;
-        let ballSpeed = 0.15;
-        let ballVelocity = new THREE.Vector3();
-        let arenaWidth = 10;
-        let arenaHeight = 7;
-        let arenaDepth = 10;
-        let paddleWidth = 1.5;
-        let paddleHeight = 1.5;
-        let paddleDepth = 0.2;
-        let ballRadius = 0.3;
-        let paddleSegments = 16;
-        let ballSegments = 32;
-        let difficulty = 0.85; // AI difficulty (0-1)
-        let maxScore = 5;
-        let ballTrail = [];
-        let maxTrailLength = 10;
-        let audio = {
-            hit: null,
-            wall: null,
-            score: null,
-            win: null,
-            lose: null,
-            background: null
-        };
-        
-        // DOM elements
-        const scoreElement = document.getElementById('score');
-        const startButton = document.getElementById('startButton');
-        const restartButton = document.getElementById('restartButton');
-        const instructionsElement = document.getElementById('instructions');
-        const gameOverElement = document.getElementById('gameOver');
-        const gameOverTextElement = document.getElementById('gameOverText');
-        const finalScoreElement = document.getElementById('finalScore');
-        const loadingElement = document.getElementById('loading');
-        
-        // Initialize the game
-        function init() {
-            // Create renderer
-            renderer = new THREE.WebGLRenderer({ 
-                canvas: document.getElementById('gameCanvas'),
-                antialias: true
-            });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setClearColor(0x000000);
-            
-            // Create scene
-            scene = new THREE.Scene();
-            
-            // Create camera
-            camera = new THREE.PerspectiveCamera(
-                75, 
-                window.innerWidth / window.innerHeight, 
-                0.1, 
-                1000
-            );
-            camera.position.set(0, 4, 8);
-            camera.lookAt(0, 0, 0);
-            
-            // Add arena and lighting
-            createArena();
-            createLighting();
-            
-            // Create paddles and ball
-            createPaddles();
-            createBall();
-            
-            // Event listeners
-            window.addEventListener('resize', onWindowResize);
-            document.addEventListener('mousemove', onMouseMove);
-            startButton.addEventListener('click', startGame);
-            restartButton.addEventListener('click', restartGame);
-            
-            // Animation loop
-            animate();
-            
-            // Hide loading text
-            loadingElement.style.display = 'none';
+    // Create game lighting
+    function createLighting() {
+      const ambientLight = new THREE.AmbientLight(0x333333);
+      scene.add(ambientLight);
+      
+      const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      mainLight.position.set(5, 10, 5);
+      scene.add(mainLight);
+      
+      const blueLight = new THREE.PointLight(0x00aaff, 2, 15);
+      blueLight.position.set(0, 2, 0);
+      scene.add(blueLight);
+      
+      scene.fog = new THREE.FogExp2(0x000000, 0.035);
+    }
+    
+    // Create player and AI paddles
+    function createPaddles() {
+      const playerMaterial = new THREE.MeshStandardMaterial({
+        color: 0x00ffff,
+        emissive: 0x00aaff,
+        metalness: 0.8,
+        roughness: 0.2
+      });
+      
+      const aiMaterial = new THREE.MeshStandardMaterial({
+        color: 0xff5500,
+        emissive: 0xaa2200,
+        metalness: 0.8,
+        roughness: 0.2
+      });
+      
+      // Player paddle
+      const playerGeometry = new THREE.BoxGeometry(
+        paddleWidth, 
+        paddleHeight, 
+        paddleDepth, 
+        paddleSegments, 
+        paddleSegments, 
+        paddleSegments
+      );
+      playerPaddle = new THREE.Mesh(playerGeometry, playerMaterial);
+      playerPaddle.position.set(0, 0, 4);
+      scene.add(playerPaddle);
+      addPaddleGlow(playerPaddle, 0x00ffff);
+      
+      // AI paddle
+      const aiGeometry = new THREE.BoxGeometry(
+        paddleWidth, 
+        paddleHeight, 
+        paddleDepth, 
+        paddleSegments, 
+        paddleSegments, 
+        paddleSegments
+      );
+      aiPaddle = new THREE.Mesh(aiGeometry, aiMaterial);
+      aiPaddle.position.set(0, 0, -4);
+      scene.add(aiPaddle);
+      addPaddleGlow(aiPaddle, 0xff5500);
+    }
+    
+    // Add glow effect to paddles
+    function addPaddleGlow(paddle, color) {
+      const glowGeometry = new THREE.BoxGeometry(
+        paddleWidth + 0.1, 
+        paddleHeight + 0.1, 
+        paddleDepth + 0.1
+      );
+      const edges = new THREE.EdgesGeometry(glowGeometry);
+      const lineMaterial = new THREE.LineBasicMaterial({ 
+        color: color,
+        linewidth: 2
+      });
+      const wireframe = new THREE.LineSegments(edges, lineMaterial);
+      paddle.add(wireframe);
+    }
+    
+    // Create the game ball
+    function createBall() {
+      const ballMaterial = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        emissive: 0x888888,
+        metalness: 0.5,
+        roughness: 0.2
+      });
+      
+      const ballGeometry = new THREE.SphereGeometry(
+        ballRadius, 
+        ballSegments, 
+        ballSegments
+      );
+      ball = new THREE.Mesh(ballGeometry, ballMaterial);
+      ball.position.set(0, 0, 0);
+      scene.add(ball);
+      
+      const ballGlow = new THREE.PointLight(0x00ffff, 2, 3);
+      ballGlow.position.set(0, 0, 0);
+      ball.add(ballGlow);
+      
+      resetBall();
+    }
+    
+    // Reset ball to center with random velocity
+    function resetBall() {
+      ball.position.set(0, 0, 0);
+      const xDir = Math.random() > 0.5 ? 1 : -1;
+      const yDir = (Math.random() * 0.5 - 0.25);
+      const zDir = playerScore > aiScore ? -1 : 1;
+      ballVelocity.set(
+        xDir * (Math.random() * 0.1 + 0.05),
+        yDir,
+        zDir * ballSpeed
+      );
+      clearBallTrail();
+    }
+    
+    // Create a trail segment for the ball
+    function createTrailSegment() {
+      if (ballTrail.length >= maxTrailLength) {
+        const oldest = ballTrail.shift();
+        scene.remove(oldest);
+      }
+      const trailGeometry = new THREE.SphereGeometry(
+        ballRadius * 0.7, 
+        ballSegments / 2, 
+        ballSegments / 2
+      );
+      const trailMaterial = new THREE.MeshBasicMaterial({
+        color: 0x00ffff,
+        transparent: true,
+        opacity: 0.4
+      });
+      const trailSegment = new THREE.Mesh(trailGeometry, trailMaterial);
+      trailSegment.position.copy(ball.position);
+      scene.add(trailSegment);
+      ballTrail.push(trailSegment);
+    }
+    
+    // Clear ball trail
+    function clearBallTrail() {
+      ballTrail.forEach(segment => {
+        scene.remove(segment);
+      });
+      ballTrail = [];
+    }
+    
+    // Handle window resize
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+    
+    // Handle mouse movement
+    function onMouseMove(event) {
+      if (!gameActive) return;
+      const rect = renderer.domElement.getBoundingClientRect();
+      const mouseX = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      const mouseY = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      mouseXSpeed = mouseX - lastMouseX;
+      mouseYSpeed = mouseY - lastMouseY;
+      lastMouseX = mouseX;
+      lastMouseY = mouseY;
+      const paddleX = mouseX * (arenaWidth/2 - paddleWidth/2);
+      const paddleY = mouseY * (arenaHeight/2 - paddleHeight/2);
+      playerPaddle.position.x = THREE.MathUtils.clamp(
+        paddleX, 
+        -(arenaWidth/2 - paddleWidth/2), 
+        (arenaWidth/2 - paddleWidth/2)
+      );
+      playerPaddle.position.y = THREE.MathUtils.clamp(
+        paddleY, 
+        -(arenaHeight/2 - paddleHeight/2), 
+        (arenaHeight/2 - paddleHeight/2)
+      );
+    }
+    
+    // Start game
+    function startGame() {
+      gameActive = true;
+      instructionsElement.style.display = 'none';
+      resetBall();
+    }
+    
+    // Restart game
+    function restartGame() {
+      playerScore = 0;
+      aiScore = 0;
+      updateScore();
+      gameOverElement.style.display = 'none';
+      gameActive = true;
+      resetBall();
+    }
+    
+    // Update score display
+    function updateScore() {
+      scoreElement.textContent = `PLAYER: ${playerScore} | AI: ${aiScore}`;
+      finalScoreElement.textContent = `PLAYER: ${playerScore} | AI: ${aiScore}`;
+    }
+    
+    // Handle game over
+    function handleGameOver() {
+      gameActive = false;
+      if (playerScore >= maxScore) {
+        gameOverTextElement.textContent = "YOU WIN";
+        gameOverTextElement.style.color = "#00ffff";
+      } else {
+        gameOverTextElement.textContent = "GAME OVER";
+        gameOverTextElement.style.color = "#ff5500";
+      }
+      gameOverElement.style.display = 'block';
+    }
+    
+    // Update AI paddle position
+    function updateAIPaddle() {
+      const targetX = ball.position.x * difficulty;
+      const targetY = ball.position.y * difficulty;
+      aiPaddle.position.x += (targetX - aiPaddle.position.x) * 0.1;
+      aiPaddle.position.y += (targetY - aiPaddle.position.y) * 0.1;
+      aiPaddle.position.x = THREE.MathUtils.clamp(
+        aiPaddle.position.x, 
+        -(arenaWidth/2 - paddleWidth/2), 
+        (arenaWidth/2 - paddleWidth/2)
+      );
+      aiPaddle.position.y = THREE.MathUtils.clamp(
+        aiPaddle.position.y, 
+        -(arenaHeight/2 - paddleHeight/2), 
+        (arenaHeight/2 - paddleHeight/2)
+      );
+    }
+    
+    // Handle ball physics
+    function updateBall() {
+      if (Math.random() > 0.5) {
+        createTrailSegment();
+      }
+      ball.position.x += ballVelocity.x;
+      ball.position.y += ballVelocity.y;
+      ball.position.z += ballVelocity.z;
+      checkWallCollisions();
+      checkPaddleCollisions();
+      checkScoring();
+      ballVelocity.y -= 0.001;
+    }
+    
+    // Check for wall collisions
+    function checkWallCollisions() {
+      if (ball.position.x <= -arenaWidth/2 + ballRadius || 
+          ball.position.x >= arenaWidth/2 - ballRadius) {
+        ballVelocity.x = -ballVelocity.x;
+        flashWalls();
+      }
+      if (ball.position.y <= -arenaHeight/2 + ballRadius || 
+          ball.position.y >= arenaHeight/2 - ballRadius) {
+        ballVelocity.y = -ballVelocity.y;
+        flashWalls();
+      }
+    }
+    
+    // Quick flash effect for walls
+    function flashWalls() {
+      scene.fog.density = 0.02;
+      setTimeout(() => {
+        scene.fog.density = 0.035;
+      }, 100);
+    }
+    
+    // Check for paddle collisions
+    function checkPaddleCollisions() {
+      if (ball.position.z >= playerPaddle.position.z - paddleDepth/2 - ballRadius && 
+          ball.position.z <= playerPaddle.position.z && 
+          ball.position.x >= playerPaddle.position.x - paddleWidth/2 - ballRadius &&
+          ball.position.x <= playerPaddle.position.x + paddleWidth/2 + ballRadius &&
+          ball.position.y >= playerPaddle.position.y - paddleHeight/2 - ballRadius &&
+          ball.position.y <= playerPaddle.position.y + paddleHeight/2 + ballRadius) {
+        ballVelocity.z = -Math.abs(ballVelocity.z) - 0.01;
+        const hitX = ball.position.x - playerPaddle.position.x;
+        const hitY = ball.position.y - playerPaddle.position.y;
+        ballVelocity.x += hitX * 0.1;
+        ballVelocity.y += hitY * 0.1;
+        ballVelocity.x += mouseXSpeed * 0.5;
+        ballVelocity.y += mouseYSpeed * 0.5;
+        ballVelocity.x = THREE.MathUtils.clamp(ballVelocity.x, -0.3, 0.3);
+        ballVelocity.y = THREE.MathUtils.clamp(ballVelocity.y, -0.3, 0.3);
+        flashPaddle(playerPaddle);
+      }
+      if (ball.position.z <= aiPaddle.position.z + paddleDepth/2 + ballRadius && 
+          ball.position.z >= aiPaddle.position.z &&
+          ball.position.x >= aiPaddle.position.x - paddleWidth/2 - ballRadius &&
+          ball.position.x <= aiPaddle.position.x + paddleWidth/2 + ballRadius &&
+          ball.position.y >= aiPaddle.position.y - paddleHeight/2 - ballRadius &&
+          ball.position.y <= aiPaddle.position.y + paddleHeight/2 + ballRadius) {
+        ballVelocity.z = Math.abs(ballVelocity.z) + 0.01;
+        const hitX = ball.position.x - aiPaddle.position.x;
+        const hitY = ball.position.y - aiPaddle.position.y;
+        ballVelocity.x += hitX * 0.1;
+        ballVelocity.y += hitY * 0.1;
+        ballVelocity.x = THREE.MathUtils.clamp(ballVelocity.x, -0.3, 0.3);
+        ballVelocity.y = THREE.MathUtils.clamp(ballVelocity.y, -0.3, 0.3);
+        flashPaddle(aiPaddle);
+      }
+    }
+    
+    // Quick flash effect for paddles
+    function flashPaddle(paddle) {
+      const originalEmissive = paddle.material.emissive.getHex();
+      paddle.material.emissive.setHex(0xffffff);
+      setTimeout(() => {
+        paddle.material.emissive.setHex(originalEmissive);
+      }, 100);
+    }
+    
+    // Check for scoring
+    function checkScoring() {
+      if (ball.position.z > arenaDepth/2 + ballRadius) {
+        aiScore++;
+        updateScore();
+        if (aiScore >= maxScore) {
+          handleGameOver();
+        } else {
+          resetBall();
         }
-        
-        // Create the game arena
-        function createArena() {
-            // Arena floor
-            const floorGeometry = new THREE.PlaneGeometry(arenaWidth, arenaDepth, 20, 20);
-            const floorMaterial = new THREE.MeshStandardMaterial({
-                color: 0x000000,
-                emissive: 0x001030,
-                wireframe: false,
-                transparent: true,
-                opacity: 0.8
-            });
-            const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-            floor.rotation.x = -Math.PI / 2;
-            floor.position.y = -arenaHeight/2;
-            scene.add(floor);
-            
-            // Grid lines for floor
-            const gridHelper = new THREE.GridHelper(
-                Math.max(arenaWidth, arenaDepth),
-                20,
-                0x0088ff,
-                0x0044aa
-            );
-            gridHelper.position.y = -arenaHeight/2 + 0.01;
-            scene.add(gridHelper);
-            
-            // Arena walls (left, right, top, bottom)
-            const wallMaterial = new THREE.MeshStandardMaterial({
-                color: 0x00aaff,
-                emissive: 0x0055aa,
-                transparent: true,
-                opacity: 0.3,
-                side: THREE.DoubleSide
-            });
-            
-            // Left wall
-            const leftWallGeometry = new THREE.PlaneGeometry(arenaDepth, arenaHeight);
-            const leftWall = new THREE.Mesh(leftWallGeometry, wallMaterial);
-            leftWall.position.set(-arenaWidth/2, 0, 0);
-            leftWall.rotation.y = Math.PI / 2;
-            scene.add(leftWall);
-            
-            // Add glow to wall edges
-            addWallGlow(leftWall, -arenaWidth/2, 0, 0);
-            
-            // Right wall
-            const rightWallGeometry = new THREE.PlaneGeometry(arenaDepth, arenaHeight);
-            const rightWall = new THREE.Mesh(rightWallGeometry, wallMaterial);
-            rightWall.position.set(arenaWidth/2, 0, 0);
-            rightWall.rotation.y = -Math.PI / 2;
-            scene.add(rightWall);
-            
-            addWallGlow(rightWall, arenaWidth/2, 0, 0);
-            
-            // Top wall
-            const topWallGeometry = new THREE.PlaneGeometry(arenaWidth, arenaHeight);
-            const topWall = new THREE.Mesh(topWallGeometry, wallMaterial);
-            topWall.position.set(0, 0, -arenaDepth/2);
-            scene.add(topWall);
-            
-            addWallGlow(topWall, 0, 0, -arenaDepth/2);
-            
-            // Bottom wall
-            const bottomWallGeometry = new THREE.PlaneGeometry(arenaWidth, arenaHeight);
-            const bottomWall = new THREE.Mesh(bottomWallGeometry, wallMaterial);
-            bottomWall.position.set(0, 0, arenaDepth/2);
-            bottomWall.rotation.y = Math.PI;
-            scene.add(bottomWall);
-            
-            addWallGlow(bottomWall, 0, 0, arenaDepth/2);
-            
-            // Ceiling
-            const ceilingGeometry = new THREE.PlaneGeometry(arenaWidth, arenaDepth);
-            const ceilingMaterial = new THREE.MeshStandardMaterial({
-                color: 0x000000,
-                emissive: 0x001030,
-                wireframe: false,
-                transparent: true,
-                opacity: 0.5,
-                side: THREE.DoubleSide
-            });
-            const ceiling = new THREE.Mesh(ceilingGeometry, ceilingMaterial);
-            ceiling.rotation.x = Math.PI / 2;
-            ceiling.position.y = arenaHeight/2;
-            scene.add(ceiling);
+      }
+      if (ball.position.z < -arenaDepth/2 - ballRadius) {
+        playerScore++;
+        updateScore();
+        if (playerScore >= maxScore) {
+          handleGameOver();
+        } else {
+          resetBall();
         }
-        
-        // Add glow effect to wall edges
-        function addWallGlow(wall, x, y, z) {
-            const edges = new THREE.EdgesGeometry(wall.geometry);
-            const lineMaterial = new THREE.LineBasicMaterial({ 
-                color: 0x00ffff,
-                linewidth: 2
-            });
-            const wireframe = new THREE.LineSegments(edges, lineMaterial);
-            wireframe.position.set(x, y, z);
-            wireframe.rotation.copy(wall.rotation);
-            scene.add(wireframe);
-        }
-        
-        // Create game lighting
-        function createLighting() {
-            // Ambient light
-            const ambientLight = new THREE.AmbientLight(0x333333);
-            scene.add(ambientLight);
-            
-            // Main directional light
-            const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            mainLight.position.set(5, 10, 5);
-            scene.add(mainLight);
-            
-            // Point lights for glow effects
-            const blueLight = new THREE.PointLight(0x00aaff, 2, 15);
-            blueLight.position.set(0, 2, 0);
-            scene.add(blueLight);
-            
-            // Add some fog for depth
-            scene.fog = new THREE.FogExp2(0x000000, 0.035);
-        }
-        
-        // Create player and AI paddles
-        function createPaddles() {
-            // Create materials
-            const playerMaterial = new THREE.MeshStandardMaterial({
-                color: 0x00ffff,
-                emissive: 0x00aaff,
-                metalness: 0.8,
-                roughness: 0.2
-            });
-            
-            const aiMaterial = new THREE.MeshStandardMaterial({
-                color: 0xff5500,
-                emissive: 0xaa2200,
-                metalness: 0.8,
-                roughness: 0.2
-            });
-            
-            // Player paddle
-            const playerGeometry = new THREE.BoxGeometry(
-                paddleWidth, 
-                paddleHeight, 
-                paddleDepth, 
-                paddleSegments, 
-                paddleSegments, 
-                paddleSegments
-            );
-            playerPaddle = new THREE.Mesh(playerGeometry, playerMaterial);
-            playerPaddle.position.set(0, 0, 4); // Player at front
-            scene.add(playerPaddle);
-            
-            // Add glow effect
-            addPaddleGlow(playerPaddle, 0x00ffff);
-            
-            // AI paddle
-            const aiGeometry = new THREE.BoxGeometry(
-                paddleWidth, 
-                paddleHeight, 
-                paddleDepth, 
-                paddleSegments, 
-                paddleSegments, 
-                paddleSegments
-            );
-            aiPaddle = new THREE.Mesh(aiGeometry, aiMaterial);
-            aiPaddle.position.set(0, 0, -4); // AI at back
-            scene.add(aiPaddle);
-            
-            // Add glow effect
-            addPaddleGlow(aiPaddle, 0xff5500);
-        }
-        
-        // Add glow effect to paddles
-        function addPaddleGlow(paddle, color) {
-            // Create a slightly larger wireframe
-            const glowGeometry = new THREE.BoxGeometry(
-                paddleWidth + 0.1, 
-                paddleHeight + 0.1, 
-                paddleDepth + 0.1
-            );
-            const edges = new THREE.EdgesGeometry(glowGeometry);
-            const lineMaterial = new THREE.LineBasicMaterial({ 
-                color: color,
-                linewidth: 2
-            });
-            const wireframe = new THREE.LineSegments(edges, lineMaterial);
-            paddle.add(wireframe);
-        }
-        
-        // Create the game ball
-        function createBall() {
-            // Ball material
-            const ballMaterial = new THREE.MeshStandardMaterial({
-                color: 0xffffff,
-                emissive: 0x888888,
-                metalness: 0.5,
-                roughness: 0.2
-            });
-            
-            // Ball geometry
-            const ballGeometry = new THREE.SphereGeometry(
-                ballRadius, 
-                ballSegments, 
-                ballSegments
-            );
-            ball = new THREE.Mesh(ballGeometry, ballMaterial);
-            ball.position.set(0, 0, 0);
-            scene.add(ball);
-            
-            // Add glow effect
-            const ballGlow = new THREE.PointLight(0x00ffff, 2, 3);
-            ballGlow.position.set(0, 0, 0);
-            ball.add(ballGlow);
-            
-            // Initialize ball velocity
-            resetBall();
-        }
-        
-        // Reset ball to center with random velocity
-        function resetBall() {
-            ball.position.set(0, 0, 0);
-            
-            // Random x direction
-            const xDir = Math.random() > 0.5 ? 1 : -1;
-            
-            // Random y direction (slight up/down)
-            const yDir = (Math.random() * 0.5 - 0.25);
-            
-            // z direction based on who scored last
-            const zDir = playerScore > aiScore ? -1 : 1;
-            
-            // Set velocity
-            ballVelocity.set(
-                xDir * (Math.random() * 0.1 + 0.05),
-                yDir,
-                zDir * ballSpeed
-            );
-            
-            // Clear trail
-            clearBallTrail();
-        }
-        
-        // Create a trail segment for the ball
-        function createTrailSegment() {
-            if (ballTrail.length >= maxTrailLength) {
-                // Remove oldest segment
-                const oldest = ballTrail.shift();
-                scene.remove(oldest);
-            }
-            
-            // Create new segment
-            const trailGeometry = new THREE.SphereGeometry(
-                ballRadius * 0.7, 
-                ballSegments / 2, 
-                ballSegments / 2
-            );
-            const trailMaterial = new THREE.MeshBasicMaterial({
-                color: 0x00ffff,
-                transparent: true,
-                opacity: 0.4
-            });
-            const trailSegment = new THREE.Mesh(trailGeometry, trailMaterial);
-            trailSegment.position.copy(ball.position);
-            
-            // Add to scene and trail array
-            scene.add(trailSegment);
-            ballTrail.push(trailSegment);
-        }
-        
-        // Clear ball trail
-        function clearBallTrail() {
-            // Remove all trail segments
-            ballTrail.forEach(segment => {
-                scene.remove(segment);
-            });
-            ballTrail = [];
-        }
-        
-        // Handle window resize
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-        
-        // Handle mouse movement
-        function onMouseMove(event) {
-            if (!gameActive) return;
-            
-            // Calculate mouse position relative to canvas
-            const rect = renderer.domElement.getBoundingClientRect();
-            const mouseX = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-            const mouseY = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-            
-            // Calculate mouse speeds for paddle momentum
-            mouseXSpeed = mouseX - lastMouseX;
-            mouseYSpeed = mouseY - lastMouseY;
-            
-            // Update last positions
-            lastMouseX = mouseX;
-            lastMouseY = mouseY;
-            
-            // Map mouse position to paddle position with limits
-            const paddleX = mouseX * (arenaWidth/2 - paddleWidth/2);
-            const paddleY = mouseY * (arenaHeight/2 - paddleHeight/2);
-            
-            // Apply to paddle
-            playerPaddle.position.x = THREE.MathUtils.clamp(
-                paddleX, 
-                -(arenaWidth/2 - paddleWidth/2), 
-                (arenaWidth/2 - paddleWidth/2)
-            );
-            
-            playerPaddle.position.y = THREE.MathUtils.clamp(
-                paddleY, 
-                -(arenaHeight/2 - paddleHeight/2), 
-                (arenaHeight/2 - paddleHeight/2)
-            );
-        }
-        
-        // Start game
-        function startGame() {
-            gameActive = true;
-            instructionsElement.style.display = 'none';
-            resetBall();
-        }
-        
-        // Restart game
-        function restartGame() {
-            playerScore = 0;
-            aiScore = 0;
-            updateScore();
-            gameOverElement.style.display = 'none';
-            gameActive = true;
-            resetBall();
-        }
-        
-        // Update score display
-        function updateScore() {
-            scoreElement.textContent = `PLAYER: ${playerScore} | AI: ${aiScore}`;
-            finalScoreElement.textContent = `PLAYER: ${playerScore} | AI: ${aiScore}`;
-        }
-        
-        // Handle game over
-        function handleGameOver() {
-            gameActive = false;
-            
-            if (playerScore >= maxScore) {
-                gameOverTextElement.textContent = "YOU WIN";
-                gameOverTextElement.style.color = "#00ffff";
-            } else {
-                gameOverTextElement.textContent = "GAME OVER";
-                gameOverTextElement.style.color = "#ff5500";
-            }
-            
-            gameOverElement.style.display = 'block';
-        }
-        
-        // Update AI paddle position
-        function updateAIPaddle() {
-            // Follow ball with some difficulty factor
-            const targetX = ball.position.x * difficulty;
-            const targetY = ball.position.y * difficulty;
-            
-            // Add some realistic movement limitations
-            aiPaddle.position.x += (targetX - aiPaddle.position.x) * 0.1;
-            aiPaddle.position.y += (targetY - aiPaddle.position.y) * 0.1;
-            
-            // Ensure AI paddle stays within bounds
-            aiPaddle.position.x = THREE.MathUtils.clamp(
-                aiPaddle.position.x, 
-                -(arenaWidth/2 - paddleWidth/2), 
-                (arenaWidth/2 - paddleWidth/2)
-            );
-            
-            aiPaddle.position.y = THREE.MathUtils.clamp(
-                aiPaddle.position.y, 
-                -(arenaHeight/2 - paddleHeight/2), 
-                (arenaHeight/2 - paddleHeight/2)
-            );
-        }
-        
-        // Handle ball physics
-        function updateBall() {
-            // Create trail effect
-            if (Math.random() > 0.5) {
-                createTrailSegment();
-            }
-            
-            // Update ball position
-            ball.position.x += ballVelocity.x;
-            ball.position.y += ballVelocity.y;
-            ball.position.z += ballVelocity.z;
-            
-            // Check for ball collisions
-            checkWallCollisions();
-            checkPaddleCollisions();
-            checkScoring();
-            
-            // Gravity effect
-            ballVelocity.y -= 0.001;
-        }
-        
-        // Check for wall collisions
-        function checkWallCollisions() {
-            // Left/right walls
-            if (ball.position.x <= -arenaWidth/2 + ballRadius || 
-                ball.position.x >= arenaWidth/2 - ballRadius) {
-                ballVelocity.x = -ballVelocity.x;
-                
-                // Visual feedback
-                flashWalls();
-            }
-            
-            // Top/bottom walls
-            if (ball.position.y <= -arenaHeight/2 + ballRadius || 
-                ball.position.y >= arenaHeight/2 - ballRadius) {
-                ballVelocity.y = -ballVelocity.y;
-                
-                // Visual feedback
-                flashWalls();
-            }
-        }
-        
-        // Quick flash effect for walls
-        function flashWalls() {
-            scene.fog.density = 0.02;
-            setTimeout(() => {
-                scene.fog.density = 0.035;
-            }, 100);
-        }
-        
-        // Check for paddle collisions
-        function checkPaddleCollisions() {
-            // Player paddle collision
-            if (ball.position.z >= playerPaddle.position.z - paddleDepth/2 - ballRadius && 
-                ball.position.z <= playerPaddle.position.z && 
-                ball.position.x >= playerPaddle.position.x - paddleWidth/2 - ballRadius &&
-                ball.position.x <= playerPaddle.position.x + paddleWidth/2 + ballRadius &&
-                ball.position.y >= playerPaddle.position.y - paddleHeight/2 - ballRadius &&
-                ball.position.y <= playerPaddle.position.y + paddleHeight/2 + ballRadius) {
-                
-                // Bounce back
-                ballVelocity.z = -Math.abs(ballVelocity.z) - 0.01;
-                
-                // Add spin based on where the ball hit the paddle and paddle movement
-                const hitX = ball.position.x - playerPaddle.position.x;
-                const hitY = ball.position.y - playerPaddle.position.y;
-                
-                // Add spin based on hit position
-                ballVelocity.x += hitX * 0.1;
-                ballVelocity.y += hitY * 0.1;
-                
-                // Add spin based on paddle movement
-                ballVelocity.x += mouseXSpeed * 0.5;
-                ballVelocity.y += mouseYSpeed * 0.5;
-                
-                // Limit maximum spin
-                ballVelocity.x = THREE.MathUtils.clamp(ballVelocity.x, -0.3, 0.3);
-                ballVelocity.y = THREE.MathUtils.clamp(ballVelocity.y, -0.3, 0.3);
-                
-                // Visual feedback
-                flashPaddle(playerPaddle);
-            }
-            
-            // AI paddle collision
-            if (ball.position.z <= aiPaddle.position.z + paddleDepth/2 + ballRadius && 
-                ball.position.z >= aiPaddle.position.z &&
-                ball.position.x >= aiPaddle.position.x - paddleWidth/2 - ballRadius &&
-                ball.position.x <= aiPaddle.position.x + paddleWidth/2 + ballRadius &&
-                ball.position.y >= aiPaddle.position.y - paddleHeight/2 - ballRadius &&
-                ball.position.y <= aiPaddle.position.y + paddleHeight/2 + ballRadius) {
-                
-                // Bounce back
-                ballVelocity.z = Math.abs(ballVelocity.z) + 0.01;
-                
-                // Add spin based on where the ball hit the paddle
-                const hitX = ball.position.x - aiPaddle.position.x;
-                const hitY = ball.position.y - aiPaddle.position.y;
-                
-                ballVelocity.x += hitX * 0.1;
-                ballVelocity.y += hitY * 0.1;
-                
-                // Limit maximum spin
-                ballVelocity.x = THREE.MathUtils.clamp(ballVelocity.x, -0.3, 0.3);
-                ballVelocity.y = THREE.MathUtils.clamp(ballVelocity.y, -0.3, 0.3);
-                
-                // Visual feedback
-                flashPaddle(aiPaddle);
-            }
-        }
-        
-        // Quick flash effect for paddles
-        function flashPaddle(paddle) {
-            // Store original emissive color
-            const originalEmissive = paddle.material.emissive.getHex();
-            
-            // Flash paddle
-            paddle.material.emissive.setHex(0xffffff);
-            
-            // Restore original color
-            setTimeout(() => {
-                paddle.material.emissive.setHex(originalEmissive);
-            }, 100);
-        }
-        
-        // Check for scoring
-        function checkScoring() {
-            // AI scores (ball passes player)
-            if (ball.position.z > arenaDepth/2 + ballRadius) {
-                aiScore++;
-                updateScore();
-                
-                // Check for game over
-                if (aiScore >= maxScore) {
-                    handleGameOver();
-                } else {
-                    resetBall();
-                }
-            }
-            
-            // Player scores (ball passes AI)
-            if (ball.position.z < -arenaDepth/2 - ballRadius) {
-                playerScore++;
-                updateScore();
-                
-                // Check for game over
-                if (playerScore >= maxScore) {
-                    handleGameOver();
-                } else {
-                    resetBall();
-                }
-            }
-        }
-        
-        // Animation loop
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            if (gameActive) {
-                updateAIPaddle();
-                updateBall();
-            }
-            
-            // Add subtle floating animation to paddles when not active
-            if (!gameActive) {
-                const time = Date.now() * 0.001;
-                playerPaddle.position.y = Math.sin(time) * 0.2;
-                aiPaddle.position.y = Math.sin(time + 1) * 0.2;
-            }
-            
-            // Rotate ball for visual effect
-            ball.rotation.x += 0.01;
-            ball.rotation.z += 0.01;
-            
-            renderer.render(scene, camera);
-        }
-        
-        // Start initialization when page loads
-        window.onload = init;
-    </script>
+      }
+    }
+    
+    // Animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+      if (gameActive) {
+        updateAIPaddle();
+        updateBall();
+      }
+      if (!gameActive) {
+        const time = Date.now() * 0.001;
+        playerPaddle.position.y = Math.sin(time) * 0.2;
+        aiPaddle.position.y = Math.sin(time + 1) * 0.2;
+      }
+      ball.rotation.x += 0.01;
+      ball.rotation.z += 0.01;
+      renderer.render(scene, camera);
+    }
+    
+    // Apply settings from the control panel
+    function applySettings() {
+      arenaWidth = parseFloat(document.getElementById("arenaWidthInput").value);
+      arenaHeight = parseFloat(document.getElementById("arenaHeightInput").value);
+      arenaDepth = parseFloat(document.getElementById("arenaDepthInput").value);
+      paddleWidth = parseFloat(document.getElementById("paddleWidthInput").value);
+      paddleHeight = parseFloat(document.getElementById("paddleHeightInput").value);
+      ballRadius = parseFloat(document.getElementById("ballRadiusInput").value);
+      ballSpeed = parseFloat(document.getElementById("ballSpeedInput").value);
+      difficulty = parseFloat(document.getElementById("difficultyInput").value);
+      maxScore = parseInt(document.getElementById("maxScoreInput").value);
+      
+      // Recreate arena, paddles, and ball with new settings
+      createArena();
+      
+      if (playerPaddle) scene.remove(playerPaddle);
+      if (aiPaddle) scene.remove(aiPaddle);
+      createPaddles();
+      
+      if (ball) scene.remove(ball);
+      createBall();
+      
+      playerScore = 0;
+      aiScore = 0;
+      updateScore();
+      gameActive = false;
+      instructionsElement.style.display = 'block';
+    }
+    
+    // Start initialization when page loads
+    window.onload = init;
+  </script>
 </body>
 </html>
